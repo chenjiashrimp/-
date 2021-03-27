@@ -1,0 +1,72 @@
+#include<iostream>
+using namespace std;
+typedef int DataType;
+struct SeqList{//使用结构体可以把顺序表的属性关联起来，毕竟本来就是有关联的数据
+	int MAXMUN;//MAXMUN是申请空间所能容纳的最多元素个数
+	int n;//表的元素个数
+	DataType* element;//存放线性表的元素
+};
+typedef struct SeqList* PSeqList;//数据类型：指向结构体的指针 重命名
+PSeqList createNullList_seq(int m) {//返回指针的函数
+	PSeqList palist = (PSeqList)malloc(sizeof(struct SeqList));//定义一个指针并申请空间，注意格式
+	if (palist != NULL) {
+		palist->element = (DataType*)malloc(sizeof(DataType) * m);//element是数组名
+		if (palist->element) {//空表长度为0  ，这是检测element有没有成功分配到空间，这是成功了 NULL==0
+			palist->MAXMUN = m;//元素个数
+			palist->n = 0;
+			return palist;
+		}
+		else free(palist);
+	}
+	printf("Out of Space !\n");//分配空间失败
+	return NULL;//要考虑任何情况都有的返回，否则会出现错误
+}
+int isNULLList_seq(PSeqList palist) {
+	return(palist->n == 0);
+}//检验是否为空表
+int locate_seq(PSeqList palist, DataType x) {//找到值为x的元素的下标
+	int q = 0;
+	for (q = 0;q < palist->n;q++)
+		if (palist->element[q] == x)
+			return q;//return即结束,无需break
+	return -1;//不存在
+}
+int insertPre_seq(PSeqList palist, int p, DataType x) {//在下标p插入值为x的元素
+	int q=0;
+	if (palist->n >= palist->MAXMUN) {//溢出，MAXMUN是申请空间所能容纳的最多元素个数
+		DataType* pos1 = (DataType*)malloc(sizeof(DataType) * palist->MAXMUN * 2);//空间扩大
+		if (pos1 == NULL) {//申请的空间太大了导致申请失败
+			printf("Overflow!\n");
+			return 0;
+		}
+		for (q = 0;q < palist->MAXMUN;q++)
+			pos1[q] = palist->element[q];
+		free(palist->element);//抹去原有元素
+		palist->element = pos1;
+		palist->MAXMUN *= 2;
+	}
+	if (p < 0 || p < palist->n) {
+		printf("Not exist!\n");
+		return 0;
+	}
+	for (q = palist->n - 1;q >= p;q--) //从大到小，这样才连贯，从小到大数会被覆盖
+		palist->element[q + 1] = palist->element[q];
+	palist->element[p] = x;
+	palist->n = palist->n + 1;
+	return 1;
+}
+int deleteP_seq(PSeqList palist, int p) {
+	int q;
+	if (p<0 || p>palist->n) {
+		printf("Not exist!\n");
+		return 0;
+	}
+	for (int q = p;q < palist->n;q++)
+		palist->element[q] = palist->element[q + 1];
+	palist->n = palist->n - 1;
+	return 1;
+}
+
+int main() {
+
+}

@@ -1,6 +1,9 @@
 # my-small-project
 暂时的想法是在这里放一些自己做的小项目，希望经过接下来两年的积累，自己的项目经历能够丰富起来，我的代码能力还很弱，一开始肯定是先从改造一些半成品的项目开始的  
-一、hangman小游戏  
-mit6.0001的作业，我恬不知耻地将其当为我做过的第三个项目（前两个分别是不围棋和信号与系统大作业，在其他project里），大概的框架其实都给我们搞好了，我做的就是写了几个function  
-简单说一下写了些啥，hangman规则自行Google。我写了两个模式的hangman，一个可以给提示的，一个不能给。其余的函数一些是用来实现游戏规则的，一些是用来搜索文件里的单词来给提示的
+1.hangman
+hangman is the hw2 of MIT 6.0001.It is a game about guessing a word. You can google the specific rules. I wrote some basic functions and the main body of game.
+2.wordgame
+It is also a game about words and the project is the hw3 of MIT 6.0001. the computer will give you some random leters and you should use the leters to combine words. And the words you make will let you get some scores. I accomplish some basic functions and the main body of the game, just like what I did in hangman. Beyond that, I also complete some functions which can give you some hints when you have trouble playing the game
+3.hog
+It is the first project of the CS61A. It is a double game about dice. each turn each player have a roll of dice and get some scores.Of course there are some special rules about the game. Beyond completing the game, I try to write functions which can decide the number of dice rolls to make you win as far as possible  
 

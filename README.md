@@ -12,6 +12,7 @@
 
   It is the first project of the CS61A. It is a double game about dice. each turn each player have a roll of dice and get some scores.Of course there are some special rules about the game. Beyond completing the game, I try to write functions which can decide the number of dice rolls to make you win as far as possible  
   
-4.cats
+4.cats  
+
 cats is the second project of cs61a and it is a project about typing words
 

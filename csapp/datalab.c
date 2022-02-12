@@ -142,7 +142,7 @@ NOTES:
  *   Max ops: 14
  *   Rating: 1
  */
-int bitXor(int x, int y) {
+int bitXor(int x, int y) {//实现异或，按位运算符就考虑一位，所以写出真值表（00 10 01 11），再根据真值表得到式子
   return ~(x&y)&~(~x&~y);
 }
 /* 
@@ -151,7 +151,7 @@ int bitXor(int x, int y) {
  *   Max ops: 4
  *   Rating: 1
  */
-int tmin(void) {
+int tmin(void) {//把最小补码给表示出来，取反就是最大补码
 
   return 0x1<<31;
 
@@ -164,7 +164,7 @@ int tmin(void) {
  *   Max ops: 10
  *   Rating: 1
  */
-int isTmax(int x) {
+int isTmax(int x) {//最大补码则返回1，！的最大好处是把非0 1的数调整为0 或者 1
   return !(x^0x7fffffff);
 }
 /* 
@@ -176,8 +176,8 @@ int isTmax(int x) {
  *   Rating: 2
  */
 int allOddBits(int x) {
-  x=x&0xAAAAAAAA;
-  return !(x^0xAAAAAAAA);
+  x=x&0xAAAAAAAA;//将无关的偶数位都调成0
+  return !(x^0xAAAAAAAA);//用异或方便比较两个数是不是一样
 }
 /* 
  * negate - return -x 
@@ -187,7 +187,8 @@ int allOddBits(int x) {
  *   Rating: 2
  */
 int negate(int x) {
-  return ~x+1;
+  return ~x+1;//由定义延申的结论，负数的补码为对应的正数取反再加1
+ //从定义出发就是模减去绝对值，再当作unsigned转为01序列
 }
 //3
 /* 
@@ -200,9 +201,9 @@ int negate(int x) {
  *   Rating: 3
  */
 int isAsciiDigit(int x) {
-  int minus1=x+(~0x30+1);
+  int minus1=x+(~0x30+1);//用到上一题结论了，如何不用减号表示两数相减
   int minus2=0x39+(~x+1);
-  return !(minus1>>31)&!(minus2>>31);
+  return !(minus1>>31)&!(minus2>>31);//判断差值的正负
 }
 /* 
  * conditional - same as x ? y : z 
@@ -213,7 +214,7 @@ int isAsciiDigit(int x) {
  */
 int conditional(int x, int y, int z) {
   int x1=!x;
-  int x2=!(!x);
+  int x2=!(!x);//用两次！
   return ((x1<<31>>31)&z)|((x2<<31>>31)&y);
 }
 /* 
@@ -225,10 +226,10 @@ int conditional(int x, int y, int z) {
  */
 int isLessOrEqual(int x, int y) {
   int x1=x>>31&1;
-  int y1=y>>31&1;
-  int minus=x+(~y+1);
-  int z=minus>>31&1;
-  return (!(x1^y1)&z)|((x1^y1)&x1)|!(x^y);
+  int y1=y>>31&1;//用01表示正负号
+  int minus=x+(~y+1);//这里单纯只用减法判断是不够的，因为相减结果可能会溢出，所以部分情况需要通过正负号比较大小
+  int z=minus>>31&1;//当然了相减还有个例外就是两数相等的情况，这时候最高位为0不是1，所以分开讨论
+  return (!(x1^y1)&z)|((x1^y1)&x1)|!(x^y);//多的特殊情况直接用|隔开就可以
 }
 //4
 /* 
@@ -241,9 +242,10 @@ int isLessOrEqual(int x, int y) {
  */
 int logicalNeg(int x) {
   int m=((x+1)>>31)&1;
-  int n=((x-1)>>31)&1;
+  int n=((x-1)>>31)&1;//只有0与其他数不同，所以要找出0独特的性质，我当时想到的时构造双射，只有0经过运算能得到某个数
+ //之后用到了0的相邻两数符号不一样的性质
   int x1=((~x)>>31)&1;
-  int x2=((~(x+1))>>31)&1;
+  int x2=((~(x+1))>>31)&1;//不过还要考虑特殊情况，就是两个在边界的数
   return (m^n)&x1&x2;
 }
 /* howManyBits - return the minimum number of bits required to represent x in
@@ -258,13 +260,13 @@ int logicalNeg(int x) {
  *  Max ops: 90
  *  Rating: 4
  */
-int howManyBits(int x) {
+int howManyBits(int x) {//一开始我以为要一位一位考虑，可是其实可以使用类似二分法的方式，一次考虑一半
   int b16,b8,b4,b2,b1,b0;
   int sign=x>>31;
-  x=(sign&~x)|(~sign&x);
-  b16=!!(x>>16)<<4;
+  x=(sign&~x)|(~sign&x);//这个处理要注意，如果是负数要取反，为了避免算术右移补1
+  b16=!!(x>>16)<<4;//技巧右移4，从而用1求出需要表示的位数，因此每次考虑的位数也是2的幂次方
   x=x>>b16;
-  b8=!!(x>>8)<<3;
+  b8=!!(x>>8)<<3;//这里又用到两次！！可以把本在其他位上的1都弄到最低位
   x=x>>b8;
   b4=!!(x>>4)<<2;
   x=x>>b4;
@@ -272,7 +274,7 @@ int howManyBits(int x) {
   x=x>>b2;
   b1=!!(x>>1);
   x=x>>b1;
-  b0=x;
+  b0=x;//最后这个不要落下，实在想不明白就自己举个简单的例子把
   return b16+b8+b4+b2+b1+b0+1;
 }
 //float
@@ -287,14 +289,14 @@ int howManyBits(int x) {
  *   Max ops: 30
  *   Rating: 4
  */
-unsigned floatScale2(unsigned uf) {
-  int exp=(uf&0x7f800000)>>23;
-  int sign=uf&(1<<31);
-  if(exp==0) return uf<<1|sign;
-  if(exp==255) return uf;
+unsigned floatScale2(unsigned uf) {//求uf的2倍，浮点数的表示和几种情况自然要搞清楚
+  int exp=(uf&0x7f800000)>>23;//这个是要得到阶码
+  int sign=uf&(1<<31);//正负
+  if(exp==0) return uf<<1|sign;//特殊情况右移阶码不变 尾数*2，相当于整体变为2倍
+  if(exp==255) return uf;//∞或者NaN
   exp++;
-  if(exp==255) return 0x7f800000|sign;
-  return (exp<<23)|(uf&0x807fffff);
+  if(exp==255) return 0x7f800000|sign;//溢出了，记得考虑正负
+  return (exp<<23)|(uf&0x807fffff);//普通情况就改一下阶码再复原就可以了
 }
 /* 
  * floatFloat2Int - Return bit-level equivalent of expression (int) f
@@ -310,18 +312,18 @@ unsigned floatScale2(unsigned uf) {
  */
 int floatFloat2Int(unsigned uf) {
   int _s=uf>>31;
-  int exp=((uf&0x7f800000)>>23)-127;
-  int frac=((uf&0x007fffff))|0x00800000;
-  if(!(uf&0x7fffffff)) return 0;
-  if(exp>31) return 0x80000000u;
-  if(exp<0) return 0;
+  int exp=((uf&0x7f800000)>>23)-127;//得到次数
+  int frac=((uf&0x007fffff))|0x00800000;//得到小数部分，尾数的1之前隐藏了，int没有这个操作，需要复原
+  if(!(uf&0x7fffffff)) return 0;//+0 和 -0 的情况
+  if(exp>31) return 0x80000000u;//尾数1开头的，左移31位就溢出了
+  if(exp<0) return 0;//浮点数<1的情况
 
-  if(exp>23) frac<<=(exp-23);
+  if(exp>23) frac<<=(exp-23);//浮点数的小数点相当于是没了，所以这里需要移位调整
   else frac>>=(23-exp);
 
-  if(frac>>31) return 0x80000000u; 
+  if(frac>>31) return 0x80000000u; //浮点数表示的范围更大，转变后溢出了
   else if(!((frac>>31)^_s)) return frac;
-  else return ~frac+1;
+  else return ~frac+1;//浮点数没有补码的概念，所以还要判断正负
 }
 /* 
  * floatPower2 - Return bit-level equivalent of the expression 2.0^x
@@ -337,8 +339,8 @@ int floatFloat2Int(unsigned uf) {
  *   Rating: 4
  */
 unsigned floatPower2(int x) {
-  if(x>127) return 0xff<<23;
-  else if(x<-148) return 0;
-  else if(x>=-126) return (x+127)<<23;
-  else return 1<<(148+x);
+  if(x>127) return 0xff<<23;//溢出了，注意取不取等呢？这边127是可以得到的
+  else if(x<-148) return 0;//注意148如何得到，除了前面阶码最小-126以外，注意尾数的小数点后面还有23位，-149可以取到
+  else if(x>=-126) return (x+127)<<23;//规范化，x偏移再左移，尾数此时不用管刚好就是1
+  else return 1<<(148+x);//阶码必须都是0了，就看尾数怎么移动了
 }

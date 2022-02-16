@@ -1,4 +1,4 @@
-
+#bomblab主要是通过阅读bomb.c的反汇编代码，运用linux的调试工具gdb，解出每一阶段需要的key，从而拆解炸弹
 bomb:     file format elf64-x86-64
 
 
@@ -343,14 +343,17 @@ Disassembly of section .text:
   400ede:	90                   	nop
   400edf:	90                   	nop
 
+#从这里开始阅读
+#其实把寄存器看成数组也并不妥当，寄存器最多也只能当作是长度为1的单位数组，毕竟只有64bit，能存放的东西很小，因为只能存一个东西，也大概能把容器和容纳的东西划等号吧（虽然非常不专业）
 0000000000400ee0 <phase_1>:
-  400ee0:	48 83 ec 08          	sub    $0x8,%rsp    
-  400ee4:	be 00 24 40 00       	mov    $0x402400,%esi
-  400ee9:	e8 4a 04 00 00       	callq  401338 <strings_not_equal>
-  400eee:	85 c0                	test   %eax,%eax
-  400ef0:	74 05                	je     400ef7 <phase_1+0x17>
+  400ee0:	48 83 ec 08          	sub    $0x8,%rsp    #分配栈帧，栈指针-0x8，注意这里的立即数都是16进制的，不要看成10进制的
+  400ee4:	be 00 24 40 00       	mov    $0x402400,%esi #寄存器esi存放了第二个参数（一个地址），这个地址存的是啥呢？
+  400ee9:	e8 4a 04 00 00       	callq  401338 <strings_not_equal> #这里调用函数，之后返回会到调用函数的位置，所以还是按顺序执行指令的，其实不看函数的反汇编，光看名字就要猜到大概输入的
+                                                                  #是字符串，然后比较是不是一样
+  400eee:	85 c0                	test   %eax,%eax #注意test指令特点
+  400ef0:	74 05                	je     400ef7 <phase_1+0x17> #跳转指令，返回值不为0会引爆炸弹
   400ef2:	e8 43 05 00 00       	callq  40143a <explode_bomb>
-  400ef7:	48 83 c4 08          	add    $0x8,%rsp
+  400ef7:	48 83 c4 08          	add    $0x8,%rsp 栈指针上移
   400efb:	c3                   	retq   
 
 0000000000400efc <phase_2>:
@@ -689,7 +692,7 @@ Disassembly of section .text:
   40131b:	80 3f 00             	cmpb   $0x0,(%rdi)
   40131e:	74 12                	je     401332 <string_length+0x17>
   401320:	48 89 fa             	mov    %rdi,%rdx
-  401323:	48 83 c2 01          	add    $0x1,%rdx
+  401323:	48 83 c2 01          	add    $0x1,%rdx #加的是寄存器里的
   401327:	89 d0                	mov    %edx,%eax
   401329:	29 f8                	sub    %edi,%eax
   40132b:	80 3a 00             	cmpb   $0x0,(%rdx)
@@ -698,20 +701,20 @@ Disassembly of section .text:
   401332:	b8 00 00 00 00       	mov    $0x0,%eax
   401337:	c3                   	retq   
 
-0000000000401338 <strings_not_equal>:
-  401338:	41 54                	push   %r12
-  40133a:	55                   	push   %rbp
-  40133b:	53                   	push   %rbx
-  40133c:	48 89 fb             	mov    %rdi,%rbx
-  40133f:	48 89 f5             	mov    %rsi,%rbp
-  401342:	e8 d4 ff ff ff       	callq  40131b <string_length>
-  401347:	41 89 c4             	mov    %eax,%r12d
-  40134a:	48 89 ef             	mov    %rbp,%rdi
+0000000000401338 <strings_not_equal>: #很长但是只需要关注重点
+  401338:	41 54                	push   %r12 #栈帧相关
+  40133a:	55                   	push   %rbp #栈帧相关
+  40133b:	53                   	push   %rbx #栈帧相关
+  40133c:	48 89 fb             	mov    %rdi,%rbx #第一个参数保存到rbx
+  40133f:	48 89 f5             	mov    %rsi,%rbp #第二个参数保存到rbp
+  401342:	e8 d4 ff ff ff       	callq  40131b <string_length> #第一个参数作为形参，调用函数
+  401347:	41 89 c4             	mov    %eax,%r12d #eax存着调用函数的结果，保存到r12d
+  40134a:	48 89 ef             	mov    %rbp,%rdi #第二个参数转给了rdi，是要作为形参再次调用函数
   40134d:	e8 c9 ff ff ff       	callq  40131b <string_length>
-  401352:	ba 01 00 00 00       	mov    $0x1,%edx
-  401357:	41 39 c4             	cmp    %eax,%r12d
-  40135a:	75 3f                	jne    40139b <strings_not_equal+0x63>
-  40135c:	0f b6 03             	movzbl (%rbx),%eax
+  401352:	ba 01 00 00 00       	mov    $0x1,%edx 
+  401357:	41 39 c4             	cmp    %eax,%r12d #比较两次调用函数的结果，其实就是比较两个字符串的长度
+  40135a:	75 3f                	jne    40139b <strings_not_equal+0x63> #如果不相等，跳转
+  40135c:	0f b6 03             	movzbl (%rbx),%eax 
   40135f:	84 c0                	test   %al,%al
   401361:	74 25                	je     401388 <strings_not_equal+0x50>
   401363:	3a 45 00             	cmp    0x0(%rbp),%al
@@ -720,7 +723,7 @@ Disassembly of section .text:
   40136a:	3a 45 00             	cmp    0x0(%rbp),%al
   40136d:	0f 1f 00             	nopl   (%rax)
   401370:	75 24                	jne    401396 <strings_not_equal+0x5e>
-  401372:	48 83 c3 01          	add    $0x1,%rbx
+  401372:	48 83 c3 01          	add    $0x1,%rbx#这里是循环，挨个比较字符是否相等
   401376:	48 83 c5 01          	add    $0x1,%rbp
   40137a:	0f b6 03             	movzbl (%rbx),%eax
   40137d:	84 c0                	test   %al,%al

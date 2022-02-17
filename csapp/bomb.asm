@@ -548,12 +548,14 @@ Disassembly of section .text:
   401153:	48 8d 74 24 18       	lea    0x18(%rsp),%rsi
   401158:	4c 89 f0             	mov    %r14,%rax
   40115b:	b9 07 00 00 00       	mov    $0x7,%ecx
+  #循环开始
   401160:	89 ca                	mov    %ecx,%edx
   401162:	2b 10                	sub    (%rax),%edx
   401164:	89 10                	mov    %edx,(%rax)
   401166:	48 83 c0 04          	add    $0x4,%rax
   40116a:	48 39 f0             	cmp    %rsi,%rax
-  40116d:	75 f1                	jne    401160 <phase_6+0x6c>
+  40116d:	75 f1                	jne    401160 <phase_6+0x6c> #不相等的时候回去
+  #循环结束
   40116f:	be 00 00 00 00       	mov    $0x0,%esi
   401174:	eb 21                	jmp    401197 <phase_6+0xa3>
   401176:	48 8b 52 08          	mov    0x8(%rdx),%rdx

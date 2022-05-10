@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>个人注册</title>
+    <!-- favicon标签制作 网站标志 位于地址栏 放于网站根目录下 -->
+    <link rel="shortcut icon" href="favicon.ico" type="image/x-icon">
+    <!-- 初始化样式文件 -->
+    <link rel="stylesheet" href="css/base.css">
+    <link rel="stylesheet" href="css/register.css">
+</head>
+<body>
+    <div class="w">
+        <header>
+            <div class="logo">
+                <a href="index.html"><img src="images/logo.png" alt=""></a>
+            </div>
+        </header>
+        <div class="registerarea">
+            <h3>
+                <div class="register">注册新用户</div>
+                <div class="log_in">
+                    我有账号，去<a href="#" class="style-red">登录</a>
+                </div>
+            </h3>
+            <!-- 表单整齐排列，可以用ul+li -->
+            <div class="reg_form">
+                <form action="">
+                    <!-- 牢记表单域要加 这样才能提交 -->
+                    <ul>
+                        <li><label for="phone_number">手机号：</label><input type="text" name="" id="phone_number"><span class="style-red">  <i class="error_icon"></i> 手机号码格式不正确，请重新输入</span></li>
+                        <li><label for="veri_code">短信验证码：</label><input type="text" name="" id="veri_code"><span class="style-red">  <i class="error_icon"></i> 手机验证码格式不正确，请重新输入</span></li>
+                        <li><label for="password">登陆密码：</label><input type="text" name="" id="password"><span class="style-red">  <i class="error_icon"></i> 密码格式不正确，请重新输入</span></li>
+                        <li class="safe">安全程度 <em class="weak">弱</em><em class="normal">中</em><em class="strong">强</em></li>
+                        <li><label for="pwd">确认密码：</label><input type="text" name="" id="pwd"><span class="style-red">  <i class="error_icon"></i> 两次密码输入不一致，请重新输入</span></li>
+                        <li class="agree"> <input type="checkbox" name="" id="" class="agree_input"> 同意协议并注册 <a href="#" class="style-red">《用户协议》</a></li>
+                        <li class="submit"> <input type="submit" value="提交注册" class="submit_button"></li>
+                    </ul>
+                </form>
+               
+            </div>
+        </div>
+        <footer>
+            <div class="mod_copyright">
+                <div class="links">
+                    <a href="#">关于我们</a>  |  <a href="#">联系我们</a>  | <a href="#">联系客服</a> |  <a href="#">商家入驻</a>   |  <a href="#">营销中心</a>   |  <a href="#">手机品优购</a>   |  <a href="#">友情链接</a>   |  <a href="#">销售联盟</a>   |  <a href="#">品优购社区</a>   |  <a href="#">品优购公益</a>   |  English Site  |  Contact U
+                </div>
+            <div class="copyright">
+                    地址：北京市昌平区建材城西路金燕龙办公楼一层 邮编：100096 电话：400-618-4000 传真：010-82935100 邮箱: zhanghj+itcast.cn <br>
+                    京ICP备08001421号京公网安备110108007702
+            </div>
+            </div>
+        </footer>
+    </div>
+</body>
+</html>
